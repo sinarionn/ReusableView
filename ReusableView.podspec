@@ -9,10 +9,10 @@ Pod::Spec.new do |s|
   s.author       = { "Artem Antihevich" => "sinarionn@gmail.com" }
   s.social_media_url = 'https://twitter.com/sinarionn'
 
-  s.ios.deployment_target = "8.0"
+  s.ios.deployment_target = "9.0"
   s.source       = { :git => "https://github.com/sinarionn/ReusableView.git", :tag => s.version.to_s }
   s.requires_arc = true
   s.dependency 'RxSwift' , '~> 3.0.0'
 
-  s.source_files = 'Sources/*.swift'  
+  s.source_files = 'Sources/*.swift'
 end

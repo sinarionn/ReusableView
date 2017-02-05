@@ -141,18 +141,6 @@ class ReusableViewTests: XCTestCase {
     
 }
 
-protocol ViewModelProtocol {
-    var observable: Observable<String> { get }
-}
-
-class ReusableView: UIView, ReusableViewProtocol {
-    @IBOutlet weak var label: UILabel!
-    
-    func onUpdate(with viewModel: ViewModelProtocol, disposeBag: DisposeBag) {
-        viewModel.observable.bindTo(label.rx.text).addDisposableTo(disposeBag)
-    }
-}
-
 
 fileprivate class TestableNonEquatable {
 }
