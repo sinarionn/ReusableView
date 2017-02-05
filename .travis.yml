@@ -1,0 +1,11 @@
+matrix:
+  include:
+    - os: osx
+      env: ACTION=iOS
+    
+language: objective-c
+osx_image: xcode8
+
+script:
+  - git submodule update --init --recursive
+  - make install-$ACTION && make test-$ACTION
