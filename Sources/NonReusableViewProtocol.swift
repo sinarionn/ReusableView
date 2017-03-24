@@ -32,6 +32,7 @@ extension NonReusableViewProtocol where Self: AnyObject, Self.CompatibleType: An
             objc_sync_exit(self)
 
             onUpdate(with: newVM, disposeBag: rx.disposeBag)
+            _viewModelDidUpdate.onNext((newVM, rx.disposeBag))
         }
         
         get {

@@ -45,6 +45,17 @@ class NonReusableViewTests: XCTestCase {
         XCTAssertTrue(object.errorReceivedViewModel == "321")
     }
     
+    func testViewModelObserver() {
+        let object = TestNonReusable()
+        let expect = expectation(description: "")
+        _ = object.rx.viewModelDidUpdate.take(1).subscribe(onNext: {
+            XCTAssert($0.0 == object.receivedViewModel)
+            XCTAssert($0.0 == "a")
+            expect.fulfill()
+        })
+        object.viewModel = "a"
+        waitForExpectations(timeout: 1, handler: nil)
+    }
 }
 
 class TestNonReusable: NonReusableViewProtocol {

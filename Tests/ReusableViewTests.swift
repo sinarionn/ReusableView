@@ -8,7 +8,6 @@
 
 import XCTest
 import RxSwift
-import RxCocoa
 
 @testable import ReusableView
 
@@ -139,6 +138,22 @@ class ReusableViewTests: XCTestCase {
         XCTAssertTrue(object.prepareForReuseCalled == 3)
     }
     
+    func testViewModelObserver() {
+        let object : TestReusable = TestDistinctiveReusable()
+        let expect = expectation(description: "")
+        _ = object.rx.viewModelDidUpdate.take(1).subscribe(onNext: {
+            XCTAssert($0.0 == object.receivedViewModel)
+            XCTAssert($0.0 == "a")
+            _ = object.rx.viewModelDidUpdate.take(1).subscribe(onNext: {
+                XCTAssert($0.0 == object.receivedViewModel)
+                XCTAssert($0.0 == "b")
+                expect.fulfill()
+            })
+            object.viewModel = "b"
+        })
+        object.viewModel = "a"
+        waitForExpectations(timeout: 1, handler: nil)
+    }
 }
 
 

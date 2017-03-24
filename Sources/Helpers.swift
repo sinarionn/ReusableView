@@ -37,12 +37,34 @@ extension Reactive where Base: ReusableViewProtocol, Base: AnyObject {
         get {
             return base.reuseBag
         }
-        set {
+        nonmutating set {
             base.reuseBag = newValue
         }
     }
 }
 
+extension ViewModelHolderProtocol {
+    internal var _viewModelDidUpdate: PublishSubject<(ViewModelProtocol, DisposeBag)> {
+        get {
+            objc_sync_enter(self)
+            defer { objc_sync_exit(self) }
+            guard let existingObserver : PublishSubject<(ViewModelProtocol, DisposeBag)> = associated(with: self, by: &AssociatedKeys.viewModelUpdateObserver) else {
+                let newObserver = PublishSubject<(ViewModelProtocol, DisposeBag)>()
+                associate(self, withValue: newObserver, by: &AssociatedKeys.viewModelUpdateObserver)
+                return newObserver
+            }
+            return existingObserver
+        }
+    }
+}
+
+extension Reactive where Base: ViewModelHolderProtocol {
+    public var viewModelDidUpdate: Observable<(Base.ViewModelProtocol, DisposeBag)> {
+        return base._viewModelDidUpdate.asObservable()
+    }
+}
+
 fileprivate struct AssociatedKeys {
     static var disposeBag = "viewModel dispose bag associated key"
+    static var viewModelUpdateObserver = "viewModel did update observer associated key"
 }

@@ -55,6 +55,7 @@ extension ReusableViewProtocol {
             guard let newVM = newValue else { return }
             objc_sync_exit(self)
             onUpdate(with: newVM, disposeBag: reuseBag)
+            _viewModelDidUpdate.onNext((newVM, reuseBag))
         }
         
         get {
@@ -80,6 +81,7 @@ extension ReusableViewProtocol where Self.ViewModelProtocol : Equatable {
             guard let newVM = newValue else { return }
             objc_sync_exit(self)
             onUpdate(with: newVM, disposeBag: reuseBag)
+            _viewModelDidUpdate.onNext((newVM, reuseBag))
         }
         
         get {
