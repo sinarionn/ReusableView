@@ -19,7 +19,7 @@ extension NonReusableViewProtocol {
     }
 }
 
-extension NonReusableViewProtocol where Self: AnyObject, Self.CompatibleType: AnyObject {
+extension NonReusableViewProtocol where Self.CompatibleType: AnyObject {
     public var viewModel: ViewModelProtocol? {
         set {
             objc_sync_enter(self); defer { objc_sync_exit(self) }

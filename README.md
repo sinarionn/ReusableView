@@ -9,8 +9,9 @@
 ## Requirements
 
 - iOS 9.0+
-- Xcode 8+
-- Swift 3
+- osX 10.10+
+- Xcode 9+
+- Swift 4
 
 ## Installation
 
@@ -22,6 +23,9 @@ pod 'ReusableView'
 ```
 
 ## Usage
+
+Extend your class with one of the following protocols and get .viewModel property for free. )
+Each viewModel change will release previous subscriptions (by releasing previous disposeBag) call `onUpdate` method again. 
 
 **NonReusableViewProtocol** - if your view should not be reused. All next attempts to set viewModel will only call onAttemptToReuse method.
 

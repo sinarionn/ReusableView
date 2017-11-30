@@ -9,7 +9,8 @@
 import Foundation
 import RxSwift
 
-public protocol DistinctiveReuse { }
+public protocol DistinctiveReuse {
+}
 
 public protocol ReusableViewProtocol: ViewModelHolderProtocol {
     func prepareForReuse()

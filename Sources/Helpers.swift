@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 
 internal func associate(_ object: Any?, withValue value: Any?,  by key: UnsafeRawPointer, policy: objc_AssociationPolicy = .OBJC_ASSOCIATION_RETAIN_NONATOMIC) {
-    objc_setAssociatedObject(object, key, value, policy)
+    object.map{ objc_setAssociatedObject($0, key, value, policy) }
 }
 
 internal func associated<T>(with object: Any, by key: UnsafeRawPointer) -> T? {
@@ -32,7 +32,7 @@ extension Reactive where Base: AnyObject {
     }
 }
 
-extension Reactive where Base: ReusableViewProtocol, Base: AnyObject {
+extension Reactive where Base: ReusableViewProtocol {
     public var reuseBag: DisposeBag {
         get {
             return base.reuseBag

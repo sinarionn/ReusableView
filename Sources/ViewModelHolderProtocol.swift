@@ -8,6 +8,11 @@
 
 import Foundation
 import RxSwift
+#if os(OSX)
+    import Cocoa
+#elseif os(iOS)
+    import UIKit
+#endif
 
 public protocol ViewModelHolderProtocol: class, ReactiveCompatible {
     associatedtype ViewModelProtocol
@@ -18,19 +23,36 @@ public protocol ViewModelHolderProtocol: class, ReactiveCompatible {
     func prepareForUsage()
 }
 
-extension ViewModelHolderProtocol {
+public extension ViewModelHolderProtocol {
     public func prepareForUsage() {}
 }
 
-extension ViewModelHolderProtocol where Self: UIViewController {
-    public func prepareForUsage() {
-        loadViewIfNeeded()
-        view.layoutIfNeeded()
-    }
-}
 
-extension ViewModelHolderProtocol where Self: UIView {
-    public func prepareForUsage() {
-        layoutIfNeeded()
+
+#if os(OSX)
+    extension ViewModelHolderProtocol where Self: NSViewController {
+        public func prepareForUsage() {
+            view.layout()
+        }
     }
-}
+    
+    extension ViewModelHolderProtocol where Self: NSView {
+        public func prepareForUsage() {
+            layout()
+        }
+    }
+#elseif os(iOS)
+    import UIKit
+    extension ViewModelHolderProtocol where Self: UIViewController {
+        public func prepareForUsage() {
+            loadViewIfNeeded()
+            view.layoutIfNeeded()
+        }
+    }
+    
+    extension ViewModelHolderProtocol where Self: UIView {
+        public func prepareForUsage() {
+            layoutIfNeeded()
+        }
+    }
+#endif
