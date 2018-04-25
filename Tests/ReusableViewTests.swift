@@ -154,8 +154,27 @@ class ReusableViewTests: XCTestCase {
         object.viewModel = "a"
         waitForExpectations(timeout: 1, handler: nil)
     }
+    
+    func testViewModelStruct() {
+        let reusable = TestReusable<TestStruct>()
+        reusable.viewModel = TestStruct(value: "1")
+        XCTAssertTrue(reusable.viewModel?.value == "1")
+    }
+    
+    func testViewModelStructErased() {
+        let reusable = TestReusable<TestStructType>()
+        reusable.viewModel = TestStruct(value: "1") as TestStructType
+        XCTAssertTrue(reusable.viewModel?.value == "1")
+    }
 }
 
+fileprivate struct TestStruct: TestStructType {
+    let value: String
+}
+
+protocol TestStructType {
+    var value: String { get }
+}
 
 fileprivate class TestableNonEquatable {
 }

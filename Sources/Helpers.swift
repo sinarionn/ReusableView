@@ -10,11 +10,21 @@ import Foundation
 import RxSwift
 
 internal func associate(_ object: Any?, withValue value: Any?,  by key: UnsafeRawPointer, policy: objc_AssociationPolicy = .OBJC_ASSOCIATION_RETAIN_NONATOMIC) {
-    object.map{ objc_setAssociatedObject($0, key, value, policy) }
+    object.map{ objc_setAssociatedObject($0, key, value.map(AssociationWrapper.init), policy) }
 }
 
 internal func associated<T>(with object: Any, by key: UnsafeRawPointer) -> T? {
-    return objc_getAssociatedObject(object, key) as? T
+    let wrapper = objc_getAssociatedObject(object, key) as? AssociationWrapper
+    return wrapper?.value as? T
+}
+
+// unfortunately i was forced to start using such wrappers due to a new bug with structures hidden behind protocols
+internal class AssociationWrapper {
+    let value: Any
+    
+    init(value: Any) {
+        self.value = value
+    }
 }
 
 extension Reactive where Base: AnyObject {

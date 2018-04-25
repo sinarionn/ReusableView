@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "ReusableView"
-  s.version      = "1.2.0"
+  s.version      = "1.2.1"
   s.summary      = "Reusable and NonReusable viewModel containers"
 
   s.homepage     = "https://github.com/sinarionn/ReusableView"
