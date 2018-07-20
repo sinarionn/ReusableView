@@ -8,6 +8,7 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 internal func associate(_ object: Any?, withValue value: Any?,  by key: UnsafeRawPointer, policy: objc_AssociationPolicy = .OBJC_ASSOCIATION_RETAIN_NONATOMIC) {
     object.map{ objc_setAssociatedObject($0, key, value.map(AssociationWrapper.init), policy) }
@@ -18,7 +19,7 @@ internal func associated<T>(with object: Any, by key: UnsafeRawPointer) -> T? {
     return wrapper?.value as? T
 }
 
-// unfortunately i was forced to start using such wrappers due to a new bug with structures hidden behind protocols
+// unfortunately i was forced to start using such wrappers due to a new objc bug with structures hidden behind protocols
 internal class AssociationWrapper {
     let value: Any
     
@@ -42,24 +43,21 @@ extension Reactive where Base: AnyObject {
     }
 }
 
-extension Reactive where Base: ReusableViewProtocol {
+extension Reactive where Base: ReusableType {
     public var reuseBag: DisposeBag {
         get {
             return base.reuseBag
         }
-        nonmutating set {
-            base.reuseBag = newValue
-        }
     }
 }
 
-extension ViewModelHolderProtocol {
-    internal var _viewModelDidUpdate: PublishSubject<(ViewModelProtocol, DisposeBag)> {
+extension ViewModelHolderType {
+    internal var _viewModelDidUpdate: PublishSubject<(ViewModelType, DisposeBag)> {
         get {
             objc_sync_enter(self)
             defer { objc_sync_exit(self) }
-            guard let existingObserver : PublishSubject<(ViewModelProtocol, DisposeBag)> = associated(with: self, by: &AssociatedKeys.viewModelUpdateObserver) else {
-                let newObserver = PublishSubject<(ViewModelProtocol, DisposeBag)>()
+            guard let existingObserver : PublishSubject<(ViewModelType, DisposeBag)> = associated(with: self, by: &AssociatedKeys.viewModelUpdateObserver) else {
+                let newObserver = PublishSubject<(ViewModelType, DisposeBag)>()
                 associate(self, withValue: newObserver, by: &AssociatedKeys.viewModelUpdateObserver)
                 return newObserver
             }
@@ -68,9 +66,15 @@ extension ViewModelHolderProtocol {
     }
 }
 
-extension Reactive where Base: ViewModelHolderProtocol {
-    public var viewModelDidUpdate: Observable<(Base.ViewModelProtocol, DisposeBag)> {
+extension Reactive where Base: ViewModelHolderType {
+    public var viewModelDidUpdate: Observable<(Base.ViewModelType, DisposeBag)> {
         return base._viewModelDidUpdate.asObservable()
+    }
+    
+    public var viewModel: Binder<Base.ViewModelType?> {
+        return Binder(base){ holder, viewModel in
+            holder.viewModel = viewModel
+        }
     }
 }
 

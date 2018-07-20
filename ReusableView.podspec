@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "ReusableView"
-  s.version      = "1.2.1"
+  s.version      = "2.0.0"
   s.summary      = "Reusable and NonReusable viewModel containers"
 
   s.homepage     = "https://github.com/sinarionn/ReusableView"
@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.osx.deployment_target = '10.10'
   s.source       = { :git => "https://github.com/sinarionn/ReusableView.git", :tag => s.version.to_s }
   s.requires_arc = true
-  s.dependency 'RxSwift' , '~> 4.0'
+  s.dependency 'RxCocoa' , '~> 4.0'
 
   s.source_files = 'Sources/*.swift'
 end

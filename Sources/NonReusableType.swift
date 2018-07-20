@@ -1,5 +1,5 @@
 //
-//  NonReusableViewProtocol.swift
+//  NonReusableType.swift
 //  ReusableView
 //
 //  Created by Artem Antihevich on 2/5/17.
@@ -9,21 +9,21 @@
 import Foundation
 import RxSwift
 
-public protocol NonReusableViewProtocol: ViewModelHolderProtocol {
-    func onAttemptToReuse(with viewModel: ViewModelProtocol?)
+public protocol NonReusableType: ViewModelHolderType {
+    func onAttemptToReuse(with viewModel: ViewModelType?)
 }
 
-extension NonReusableViewProtocol {
-    public func onAttemptToReuse(with viewModel: ViewModelProtocol?) {
-        print("\(String(describing: self)) doesn't support reuse. Use ReusableViewProtocol instead.")
+extension NonReusableType {
+    public func onAttemptToReuse(with viewModel: ViewModelType?) {
+        assertionFailure("\(String(describing: self)) doesn't support reuse. Use ReusableType instead.")
     }
 }
 
-extension NonReusableViewProtocol where Self.CompatibleType: AnyObject {
-    public var viewModel: ViewModelProtocol? {
+extension NonReusableType where Self.CompatibleType: AnyObject {
+    public var viewModel: ViewModelType? {
         set {
             objc_sync_enter(self); defer { objc_sync_exit(self) }
-            guard associated(with: self, by: &AssociatedKeys.viewModel) as ViewModelProtocol? == nil else {
+            guard associated(with: self, by: &AssociatedKeys.viewModel) as ViewModelType? == nil else {
                 return onAttemptToReuse(with: newValue)
             }
             guard let newVM = newValue else { return }
@@ -31,7 +31,7 @@ extension NonReusableViewProtocol where Self.CompatibleType: AnyObject {
             associate(self, withValue: newVM, by: &AssociatedKeys.viewModel)
             objc_sync_exit(self)
 
-            onUpdate(with: newVM, disposeBag: rx.disposeBag)
+            onUpdate(with: newVM, reuseBag: rx.disposeBag)
             _viewModelDidUpdate.onNext((newVM, rx.disposeBag))
         }
         

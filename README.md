@@ -12,6 +12,7 @@
 - osX 10.10+
 - Xcode 9+
 - Swift 4
+- RxCocoa 4.0+
 
 ## Installation
 
@@ -25,46 +26,46 @@ pod 'ReusableView'
 ## Usage
 
 Extend your class with one of the following protocols and get .viewModel property for free. )
-Each viewModel change will release previous subscriptions (by releasing previous disposeBag) call `onUpdate` method again. 
+Each viewModel change releases previous subscriptions (by releasing previous reuseBag) and calls `onUpdate` method again.
 
-**NonReusableViewProtocol** - if your view should not be reused. All next attempts to set viewModel will only call onAttemptToReuse method.
+**NonReusableType** - if your view should not be reused. All next attempts to set viewModel will only call onAttemptToReuse method. (Allows you to ensure vm will be only one. Usually used with UIViewControllers.)
 
-**ReusableViewProtocol** - if your view supports reuse. prepareForReuse will be called each time.
+**ReusableType** - if your view supports reuse. viewModelWillUpdate will be called before each assignment. (can be used with cells, views in stackview and so on)
 
-**DistinctiveReuse** - marker, ReusableView will ignore all viewModels that are equal to current one.
+
+## Methods
+
+**prepareForUsage()** - called only once before first assignment, can be used to initialize view. (check out default implementations)
+
+**viewModelWillUpdate()** - called before each assignment.
+
 
 ## Examples
 
-#### Simple NonReusableView
 
 ```swift
-protocol ViewModelProtocol {
-    var observable: Observable<String> { get }
+protocol MainViewModelType {
+    var child: Driver<ChildViewModelType> { get }
 }
 
-class NonReusableView: UIView, NonReusableViewProtocol {
-    @IBOutlet weak var label: UILabel!
+protocol ChildViewModelType {
+    var title: Driver<String> { get }
+}
 
-    // In case of NonReusableViewProtocol disposeBag are equal to rx.disposeBag. Method will be called only one time.
-    func onUpdate(with viewModel: ViewModelProtocol, disposeBag: DisposeBag) {
-        viewModel.observable.bindTo(label.rx.text).addDisposableTo(disposeBag)
+class MainViewController: UIViewController, NonReusableType {
+    @IBOutlet weak var childView: ChildView!
+
+    func onUpdate(with viewModel: MainViewModelType, reuseBag: DisposeBag) {
+        viewModel.child.drive(childView.rx.viewModel).disposed(by: reuseBag)
     }
 }
-```
 
-#### Simplest ReusableView
-
-```swift
-protocol ViewModelProtocol: Equatable {
-    var observable: Observable<String> { get }
-}
-
-class ReusableView: UIView, ReusableViewProtocol, DistinctiveReuse {
+class ChildView: UIView, ReusableType {
     @IBOutlet weak var label: UILabel!
 
-    // parameter disposeBag will be new for each time viewModel is successfully set.
-    func onUpdate(with viewModel: ViewModelProtocol, disposeBag: DisposeBag) {
-        viewModel.observable.bindTo(label.rx.text).addDisposableTo(disposeBag)
+    // parameter reuseBag will be new for each new viewModel.
+    func onUpdate(with viewModel: ChildViewModelType, reuseBag: DisposeBag) {
+        viewModel.title.drive(label.rx.text).disposed(by: reuseBag)
     }
 }
 ```

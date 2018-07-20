@@ -1,5 +1,5 @@
 //
-//  ViewModelHolderProtocol.swift
+//  ViewModelHolderType.swift
 //  ReusableView
 //
 //  Created by Artem Antihevich on 2/5/17.
@@ -14,43 +14,43 @@ import RxSwift
     import UIKit
 #endif
 
-public protocol ViewModelHolderProtocol: class, ReactiveCompatible {
-    associatedtype ViewModelProtocol
-    var viewModel: ViewModelProtocol? { get set }
+public protocol ViewModelHolderType: class, ReactiveCompatible {
+    associatedtype ViewModelType
+    var viewModel: ViewModelType? { get set }
     
-    func onUpdate(with viewModel: ViewModelProtocol, disposeBag: DisposeBag)
+    func onUpdate(with viewModel: ViewModelType, reuseBag: DisposeBag)
     
     func prepareForUsage()
 }
 
-public extension ViewModelHolderProtocol {
+public extension ViewModelHolderType {
     public func prepareForUsage() {}
 }
 
 
 
 #if os(OSX)
-    extension ViewModelHolderProtocol where Self: NSViewController {
+    extension ViewModelHolderType where Self: NSViewController {
         public func prepareForUsage() {
             view.layout()
         }
     }
     
-    extension ViewModelHolderProtocol where Self: NSView {
+    extension ViewModelHolderType where Self: NSView {
         public func prepareForUsage() {
             layout()
         }
     }
 #elseif os(iOS)
     import UIKit
-    extension ViewModelHolderProtocol where Self: UIViewController {
+    extension ViewModelHolderType where Self: UIViewController {
         public func prepareForUsage() {
             loadViewIfNeeded()
             view.layoutIfNeeded()
         }
     }
     
-    extension ViewModelHolderProtocol where Self: UIView {
+    extension ViewModelHolderType where Self: UIView {
         public func prepareForUsage() {
             layoutIfNeeded()
         }

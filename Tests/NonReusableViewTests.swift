@@ -13,6 +13,13 @@ import RxSwift
 
 class NonReusableViewTests: XCTestCase {
     
+    var disposeBag: DisposeBag!
+    
+    override func setUp() {
+        super.setUp()
+        disposeBag = DisposeBag()
+    }
+    
     func testDisposeBag() {
         var object : TestNonReusable? = TestNonReusable()
         var disposeCalled = false
@@ -56,14 +63,30 @@ class NonReusableViewTests: XCTestCase {
         object.viewModel = "a"
         waitForExpectations(timeout: 1, handler: nil)
     }
+    
+    func testBinder() {
+        let container = TestNonReusable()
+        let relay = BehaviorSubject<String>(value: "123")
+        relay.bind(to: container.rx.viewModel).disposed(by: disposeBag)
+        XCTAssertEqual(container.viewModel, "123")
+    }
+    
+    func testOptionalBinder() {
+        let container = TestNonReusable()
+        let relay = BehaviorSubject<String?>(value: "123")
+        relay.bind(to: container.rx.viewModel).disposed(by: disposeBag)
+        XCTAssertEqual(container.viewModel, "123")
+        relay.onNext("321")
+        XCTAssertEqual(container.errorReceivedViewModel, "321")
+    }
 }
 
-class TestNonReusable: NonReusableViewProtocol {
+class TestNonReusable: NonReusableType {
     var receivedViewModel: String?
     var prepareForUsageCalled: Int = 0
     var errorReceivedViewModel: String?
     
-    func onUpdate(with viewModel: String, disposeBag: DisposeBag) {
+    func onUpdate(with viewModel: String, reuseBag: DisposeBag) {
         receivedViewModel = viewModel
     }
     

@@ -13,6 +13,13 @@ import RxSwift
 
 class ReusableViewTests: XCTestCase {
     
+    var disposeBag: DisposeBag!
+    
+    override func setUp() {
+        super.setUp()
+        disposeBag = DisposeBag()
+    }
+    
     func testReuseBagOnEquatableVM() {
         let object = TestReusable<String>()
         var value: Int = 0
@@ -69,7 +76,7 @@ class ReusableViewTests: XCTestCase {
         
         XCTAssertNil(object.viewModel)
         XCTAssertTrue(object.prepareForUsageCalled == 0)
-        XCTAssertTrue(object.prepareForReuseCalled == 0)
+        XCTAssertTrue(object.viewModelWillUpdateCalled == 0)
         
         
         let instance0 = TestableNonEquatable()
@@ -77,7 +84,7 @@ class ReusableViewTests: XCTestCase {
         XCTAssertTrue(object.viewModel === instance0)
         XCTAssertTrue(object.receivedViewModel === instance0)
         XCTAssertTrue(object.prepareForUsageCalled == 1)
-        XCTAssertTrue(object.prepareForReuseCalled == 1)
+        XCTAssertTrue(object.viewModelWillUpdateCalled == 1)
         object.receivedViewModel = nil
         
         let instance1 = TestableNonEquatable()
@@ -85,7 +92,7 @@ class ReusableViewTests: XCTestCase {
         XCTAssertTrue(object.viewModel === instance1)
         XCTAssertTrue(object.receivedViewModel === instance1)
         XCTAssertTrue(object.prepareForUsageCalled == 1)
-        XCTAssertTrue(object.prepareForReuseCalled == 2)
+        XCTAssertTrue(object.viewModelWillUpdateCalled == 2)
         object.receivedViewModel = nil
         
         let instance2 = TestableNonEquatable()
@@ -93,14 +100,14 @@ class ReusableViewTests: XCTestCase {
         XCTAssertTrue(object.viewModel === instance2)
         XCTAssertTrue(object.receivedViewModel === instance2)
         XCTAssertTrue(object.prepareForUsageCalled == 1)
-        XCTAssertTrue(object.prepareForReuseCalled == 3)
+        XCTAssertTrue(object.viewModelWillUpdateCalled == 3)
         object.receivedViewModel = nil
         
         object.viewModel = nil
         XCTAssertTrue(object.viewModel == nil)
         XCTAssertTrue(object.receivedViewModel == nil)
         XCTAssertTrue(object.prepareForUsageCalled == 1)
-        XCTAssertTrue(object.prepareForReuseCalled == 4)
+        XCTAssertTrue(object.viewModelWillUpdateCalled == 4)
     }
     
     func testDistinctiveFlow() {
@@ -108,34 +115,34 @@ class ReusableViewTests: XCTestCase {
         
         XCTAssertNil(object.viewModel)
         XCTAssertTrue(object.prepareForUsageCalled == 0)
-        XCTAssertTrue(object.prepareForReuseCalled == 0)
+        XCTAssertTrue(object.viewModelWillUpdateCalled == 0)
         
         object.viewModel = "123"
         XCTAssertTrue(object.viewModel == "123")
         XCTAssertTrue(object.receivedViewModel == "123")
         XCTAssertTrue(object.prepareForUsageCalled == 1)
-        XCTAssertTrue(object.prepareForReuseCalled == 1)
+        XCTAssertTrue(object.viewModelWillUpdateCalled == 1)
         object.receivedViewModel = nil
         
         object.viewModel = "123"
         XCTAssertTrue(object.viewModel == "123")
         XCTAssertTrue(object.receivedViewModel == nil)
         XCTAssertTrue(object.prepareForUsageCalled == 1)
-        XCTAssertTrue(object.prepareForReuseCalled == 1)
+        XCTAssertTrue(object.viewModelWillUpdateCalled == 1)
         object.receivedViewModel = nil
         
         object.viewModel = "321"
         XCTAssertTrue(object.viewModel == "321")
         XCTAssertTrue(object.receivedViewModel == "321")
         XCTAssertTrue(object.prepareForUsageCalled == 1)
-        XCTAssertTrue(object.prepareForReuseCalled == 2)
+        XCTAssertTrue(object.viewModelWillUpdateCalled == 2)
         object.receivedViewModel = nil
         
         object.viewModel = nil
         XCTAssertTrue(object.viewModel == nil)
         XCTAssertTrue(object.receivedViewModel == nil)
         XCTAssertTrue(object.prepareForUsageCalled == 1)
-        XCTAssertTrue(object.prepareForReuseCalled == 3)
+        XCTAssertTrue(object.viewModelWillUpdateCalled == 3)
     }
     
     func testViewModelObserver() {
@@ -166,6 +173,26 @@ class ReusableViewTests: XCTestCase {
         reusable.viewModel = TestStruct(value: "1") as TestStructType
         XCTAssertTrue(reusable.viewModel?.value == "1")
     }
+    
+    func testBinder() {
+        let reusable = TestReusable<String>()
+        let relay = BehaviorSubject<String>(value: "123")
+        relay.bind(to: reusable.rx.viewModel).disposed(by: disposeBag)
+        XCTAssertEqual(reusable.viewModel, "123")
+        relay.onNext("321")
+        XCTAssertEqual(reusable.viewModel, "321")
+    }
+    
+    func testOptionalBinder() {
+        let reusable = TestReusable<String>()
+        let relay = BehaviorSubject<String?>(value: "123")
+        relay.bind(to: reusable.rx.viewModel).disposed(by: disposeBag)
+        XCTAssertEqual(reusable.viewModel, "123")
+        relay.onNext(nil)
+        XCTAssertEqual(reusable.viewModel, nil)
+        relay.onNext("321")
+        XCTAssertEqual(reusable.viewModel, "321")
+    }
 }
 
 fileprivate struct TestStruct: TestStructType {
@@ -179,12 +206,12 @@ protocol TestStructType {
 fileprivate class TestableNonEquatable {
 }
 
-fileprivate class TestReusable<T>: ReusableViewProtocol {
+fileprivate class TestReusable<T>: ReusableType {
     var receivedViewModel: T?
     var prepareForUsageCalled: Int = 0
-    var prepareForReuseCalled: Int = 0
+    var viewModelWillUpdateCalled: Int = 0
     
-    fileprivate func onUpdate(with viewModel: T, disposeBag: DisposeBag) {
+    fileprivate func onUpdate(with viewModel: T, reuseBag: DisposeBag) {
         receivedViewModel = viewModel
     }
 
@@ -192,8 +219,8 @@ fileprivate class TestReusable<T>: ReusableViewProtocol {
         prepareForUsageCalled += 1
     }
     
-    func prepareForReuse() {
-        prepareForReuseCalled += 1
+    func viewModelWillUpdate() {
+        viewModelWillUpdateCalled += 1
     }
 }
 

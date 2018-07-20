@@ -1,5 +1,5 @@
 //
-//  ReusableViewProtocol.swift
+//  ReusableType.swift
 //  ReusableView
 //
 //  Created by Artem Antihevich on 2/5/17.
@@ -12,12 +12,12 @@ import RxSwift
 public protocol DistinctiveReuse {
 }
 
-public protocol ReusableViewProtocol: ViewModelHolderProtocol {
-    func prepareForReuse()
+public protocol ReusableType: ViewModelHolderType {
+    func viewModelWillUpdate()
 }
 
-extension ReusableViewProtocol {
-    public func prepareForReuse() {}
+extension ReusableType {
+    public func viewModelWillUpdate() {}
     
     internal var reuseBag: DisposeBag {
         get {
@@ -36,26 +36,26 @@ extension ReusableViewProtocol {
     }
 }
 
-extension ReusableViewProtocol {
+extension ReusableType {
     fileprivate var prepareForUsageWasCalled: Bool {
         get { return associated(with: self, by: &AssociatedKeys.prepareCalled) ?? false }
         set { associate(self, withValue: newValue, by: &AssociatedKeys.prepareCalled) }
     }
     
-    public var viewModel: ViewModelProtocol? {
+    public var viewModel: ViewModelType? {
         set {
             objc_sync_enter(self); defer { objc_sync_exit(self) }
             if !prepareForUsageWasCalled {
                 prepareForUsage()
                 prepareForUsageWasCalled = true
             }
-            prepareForReuse()
+            viewModelWillUpdate()
             let reuseBag = DisposeBag()
             self.reuseBag = reuseBag
             associate(self, withValue: newValue, by: &AssociatedKeys.viewModel)
             guard let newVM = newValue else { return }
             objc_sync_exit(self)
-            onUpdate(with: newVM, disposeBag: reuseBag)
+            onUpdate(with: newVM, reuseBag: reuseBag)
             _viewModelDidUpdate.onNext((newVM, reuseBag))
         }
         
@@ -66,8 +66,8 @@ extension ReusableViewProtocol {
     }
 }
 
-extension ReusableViewProtocol where Self.ViewModelProtocol : Equatable {
-    public var viewModel: ViewModelProtocol? {
+extension ReusableType where Self.ViewModelType : Equatable {
+    public var viewModel: ViewModelType? {
         set {
             objc_sync_enter(self); defer { objc_sync_exit(self) }
             if !prepareForUsageWasCalled { /// TODO: find alternative
@@ -75,13 +75,13 @@ extension ReusableViewProtocol where Self.ViewModelProtocol : Equatable {
                 prepareForUsageWasCalled = true
             }
             if self is DistinctiveReuse && newValue == viewModel { return }
-            prepareForReuse()
+            viewModelWillUpdate()
             let reuseBag = DisposeBag()
             self.reuseBag = reuseBag
             associate(self, withValue: newValue, by: &AssociatedKeys.viewModel)
             guard let newVM = newValue else { return }
             objc_sync_exit(self)
-            onUpdate(with: newVM, disposeBag: reuseBag)
+            onUpdate(with: newVM, reuseBag: reuseBag)
             _viewModelDidUpdate.onNext((newVM, reuseBag))
         }
         
