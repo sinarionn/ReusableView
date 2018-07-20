@@ -45,7 +45,9 @@ public extension ViewModelHolderType {
     import UIKit
     extension ViewModelHolderType where Self: UIViewController {
         public func prepareForUsage() {
-            loadViewIfNeeded()
+            if #available(iOS 9.0, *) {
+                loadViewIfNeeded()
+            } 
             view.layoutIfNeeded()
         }
     }
