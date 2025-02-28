@@ -8,7 +8,6 @@
 
 import Foundation
 import RxSwift
-import RxCocoa
 
 internal func associate(_ object: Any?, withValue value: Any?,  by key: UnsafeRawPointer, policy: objc_AssociationPolicy = .OBJC_ASSOCIATION_RETAIN_NONATOMIC) {
     object.map{ objc_setAssociatedObject($0, key, value.map(AssociationWrapper.init), policy) }

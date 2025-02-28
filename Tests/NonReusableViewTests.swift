@@ -8,6 +8,7 @@
 
 import XCTest
 import RxSwift
+import RxCocoa
 
 @testable import ReusableView
 

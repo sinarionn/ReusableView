@@ -11,11 +11,10 @@
 		77015C1E2D71FD9B001681C5 /* ReusableType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77015C1B2D71FD9B001681C5 /* ReusableType.swift */; };
 		77015C1F2D71FD9B001681C5 /* ViewModelHolderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77015C1C2D71FD9B001681C5 /* ViewModelHolderType.swift */; };
 		77015C202D71FD9B001681C5 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77015C192D71FD9B001681C5 /* Helpers.swift */; };
-		7767F4892D72087800BFCA35 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A127E31D59C0440057F9E8 /* RxCocoa.framework */; platformFilters = (ios, maccatalyst, macos, ); };
-		7767F48A2D72087800BFCA35 /* RxCocoa.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0A127E31D59C0440057F9E8 /* RxCocoa.framework */; platformFilters = (ios, maccatalyst, macos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		774D53AE2D7247B100B52436 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A127E31D59C0440057F9E8 /* RxCocoa.framework */; };
+		774D53AF2D7247B100B52436 /* RxCocoa.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0A127E31D59C0440057F9E8 /* RxCocoa.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7767F48B2D72087800BFCA35 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A127DB1D59C0440057F9E8 /* RxSwift.framework */; platformFilters = (ios, maccatalyst, macos, ); };
 		7767F48C2D72087800BFCA35 /* RxSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0A127DB1D59C0440057F9E8 /* RxSwift.framework */; platformFilters = (ios, maccatalyst, macos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		C0A128151D59C7820057F9E8 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A127E31D59C0440057F9E8 /* RxCocoa.framework */; };
 		C0A128161D59C7860057F9E8 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A127DB1D59C0440057F9E8 /* RxSwift.framework */; };
 		C0ADC4F81E476829001D889B /* ReusableView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0D5E8C31E4731B900860A05 /* ReusableView.framework */; };
 		C0D5E8DA1E473ED600860A05 /* AssociationsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D5E8D91E473ED600860A05 /* AssociationsTests.swift */; };
@@ -97,6 +96,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		774D53B02D7247B100B52436 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				774D53AF2D7247B100B52436 /* RxCocoa.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7767F48D2D72087800BFCA35 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -104,7 +114,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				7767F48C2D72087800BFCA35 /* RxSwift.framework in Embed Frameworks */,
-				7767F48A2D72087800BFCA35 /* RxCocoa.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -135,9 +144,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				774D53AE2D7247B100B52436 /* RxCocoa.framework in Frameworks */,
 				C0ADC4F81E476829001D889B /* ReusableView.framework in Frameworks */,
 				C0A128161D59C7860057F9E8 /* RxSwift.framework in Frameworks */,
-				C0A128151D59C7820057F9E8 /* RxCocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,7 +155,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				7767F48B2D72087800BFCA35 /* RxSwift.framework in Frameworks */,
-				7767F4892D72087800BFCA35 /* RxCocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,6 +270,7 @@
 				C089D3231D54A3BF00599DD7 /* Sources */,
 				C089D3241D54A3BF00599DD7 /* Frameworks */,
 				C089D3251D54A3BF00599DD7 /* Resources */,
+				774D53B02D7247B100B52436 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
