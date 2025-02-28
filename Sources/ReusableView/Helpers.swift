@@ -72,13 +72,13 @@ extension Reactive where Base: ViewModelHolderType {
     }
     
     public var viewModel: Binder<Base.ViewModelType?> {
-        return Binder(base){ holder, viewModel in
+        return Binder(base, scheduler: MainScheduler.instance){ holder, viewModel in
             holder.viewModel = viewModel
         }
     }
 }
 
 fileprivate struct AssociatedKeys {
-    static var disposeBag = "viewModel dispose bag associated key"
-    static var viewModelUpdateObserver = "viewModel did update observer associated key"
+    nonisolated(unsafe) static var disposeBag = "viewModel dispose bag associated key"
+    nonisolated(unsafe) static var viewModelUpdateObserver = "viewModel did update observer associated key"
 }

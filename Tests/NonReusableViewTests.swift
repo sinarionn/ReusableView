@@ -31,7 +31,7 @@ class NonReusableViewTests: XCTestCase {
         XCTAssertTrue(disposeCalled == true)
     }
     
-    func testFlow() {
+    @MainActor func testFlow() {
         let object = TestNonReusable()
         
         XCTAssertNil(object.viewModel)
@@ -52,7 +52,7 @@ class NonReusableViewTests: XCTestCase {
         XCTAssertTrue(object.errorReceivedViewModel == "321")
     }
     
-    func testViewModelObserver() {
+    @MainActor func testViewModelObserver() {
         let object = TestNonReusable()
         let expect = expectation(description: "")
         _ = object.rx.viewModelDidUpdate.take(1).subscribe(onNext: {
@@ -64,14 +64,14 @@ class NonReusableViewTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
     
-    func testBinder() {
+    @MainActor func testBinder() {
         let container = TestNonReusable()
         let relay = BehaviorSubject<String>(value: "123")
         relay.bind(to: container.rx.viewModel).disposed(by: disposeBag)
         XCTAssertEqual(container.viewModel, "123")
     }
     
-    func testOptionalBinder() {
+    @MainActor func testOptionalBinder() {
         let container = TestNonReusable()
         let relay = BehaviorSubject<String?>(value: "123")
         relay.bind(to: container.rx.viewModel).disposed(by: disposeBag)

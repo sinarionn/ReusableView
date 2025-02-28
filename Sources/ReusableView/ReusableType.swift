@@ -93,7 +93,7 @@ extension ReusableType where Self.ViewModelType : Equatable {
 }
 
 fileprivate struct AssociatedKeys {
-    static var reuseBag = "viewModel reuse bag associated key"
-    static var viewModel = "view model associated key"
-    static var prepareCalled = "prepare for usage was called key"
+    nonisolated(unsafe) static var reuseBag = "viewModel reuse bag associated key"
+    nonisolated(unsafe) static var viewModel = "view model associated key"
+    nonisolated(unsafe) static var prepareCalled = "prepare for usage was called key"
 }

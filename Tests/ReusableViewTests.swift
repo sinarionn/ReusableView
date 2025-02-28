@@ -20,7 +20,7 @@ class ReusableViewTests: XCTestCase {
         disposeBag = DisposeBag()
     }
     
-    func testReuseBagOnEquatableVM() {
+    @MainActor func testReuseBagOnEquatableVM() {
         let object = TestReusable<String>()
         var value: Int = 0
         object.rx.reuseBag.insert(Disposables.create {
@@ -40,7 +40,7 @@ class ReusableViewTests: XCTestCase {
         XCTAssertTrue(value == 3)
     }
     
-    func testReuseBagOnNonEquatableVM() {
+    @MainActor func testReuseBagOnNonEquatableVM() {
         let object = TestReusable<TestableNonEquatable>()
         var value: Int = 0
         object.rx.reuseBag.insert(Disposables.create {
@@ -71,7 +71,7 @@ class ReusableViewTests: XCTestCase {
         XCTAssertTrue(disposeCalled == true)
     }
     
-    func testFlow() {
+    @MainActor func testFlow() {
         let object = TestReusable<TestableNonEquatable>()
         
         XCTAssertNil(object.viewModel)
@@ -110,7 +110,7 @@ class ReusableViewTests: XCTestCase {
         XCTAssertTrue(object.viewModelWillUpdateCalled == 4)
     }
     
-    func testDistinctiveFlow() {
+    @MainActor func testDistinctiveFlow() {
         let object : TestReusable = TestDistinctiveReusable()
         
         XCTAssertNil(object.viewModel)
@@ -145,7 +145,7 @@ class ReusableViewTests: XCTestCase {
         XCTAssertTrue(object.viewModelWillUpdateCalled == 3)
     }
     
-    func testViewModelObserver() {
+    @MainActor func testViewModelObserver() {
         let object : TestReusable = TestDistinctiveReusable()
         let expect = expectation(description: "")
         _ = object.rx.viewModelDidUpdate.take(1).subscribe(onNext: {
@@ -162,19 +162,19 @@ class ReusableViewTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
     
-    func testViewModelStruct() {
+    @MainActor func testViewModelStruct() {
         let reusable = TestReusable<TestStruct>()
         reusable.viewModel = TestStruct(value: "1")
         XCTAssertTrue(reusable.viewModel?.value == "1")
     }
     
-    func testViewModelStructErased() {
+    @MainActor func testViewModelStructErased() {
         let reusable = TestReusable<TestStructType>()
         reusable.viewModel = TestStruct(value: "1") as TestStructType
         XCTAssertTrue(reusable.viewModel?.value == "1")
     }
     
-    func testBinder() {
+    @MainActor func testBinder() {
         let reusable = TestReusable<String>()
         let relay = BehaviorSubject<String>(value: "123")
         relay.bind(to: reusable.rx.viewModel).disposed(by: disposeBag)
@@ -183,7 +183,7 @@ class ReusableViewTests: XCTestCase {
         XCTAssertEqual(reusable.viewModel, "321")
     }
     
-    func testOptionalBinder() {
+    @MainActor func testOptionalBinder() {
         let reusable = TestReusable<String>()
         let relay = BehaviorSubject<String?>(value: "123")
         relay.bind(to: reusable.rx.viewModel).disposed(by: disposeBag)

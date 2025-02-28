@@ -57,7 +57,7 @@ class AssociationsTests: XCTestCase {
     }
 }
 
-private var key = "associated key"
+nonisolated(unsafe) private var key = "associated key"
 
 private class TestClass {
     var value: String

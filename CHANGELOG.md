@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.0](https://github.com/sinarionn/ReusableView/releases/tag/2.0.0)
+
+RxSwift 6 Migrated
+Swift 5 Updated 
+
+
 ## [2.0.1](https://github.com/sinarionn/ReusableView/releases/tag/2.0.0)
 
 Project fixed for Carthage support.

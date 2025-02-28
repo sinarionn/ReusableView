@@ -14,7 +14,7 @@ import RxSwift
     import UIKit
 #endif
 
-public protocol ViewModelHolderType: class, ReactiveCompatible {
+public protocol ViewModelHolderType: AnyObject, ReactiveCompatible {
     associatedtype ViewModelType
     var viewModel: ViewModelType? { get set }
     
@@ -24,7 +24,7 @@ public protocol ViewModelHolderType: class, ReactiveCompatible {
 }
 
 public extension ViewModelHolderType {
-    public func prepareForUsage() {}
+    func prepareForUsage() {}
 }
 
 
@@ -45,9 +45,7 @@ public extension ViewModelHolderType {
     import UIKit
     extension ViewModelHolderType where Self: UIViewController {
         public func prepareForUsage() {
-            if #available(iOS 9.0, *) {
-                loadViewIfNeeded()
-            } 
+            loadViewIfNeeded()
             view.layoutIfNeeded()
         }
     }

@@ -8,11 +8,11 @@
 
 ## Requirements
 
-- iOS 9.0+
-- osX 10.10+
-- Xcode 9+
-- Swift 4
-- RxCocoa 4.0+
+- iOS 12.0+
+- osX 11.0+
+- Xcode 16+
+- Swift 5
+- RxCocoa 6.0+
 
 ## Installation
 
